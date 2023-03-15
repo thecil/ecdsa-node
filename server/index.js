@@ -6,16 +6,38 @@ const port = 3042;
 app.use(cors());
 app.use(express.json());
 
-const balances = {
-  "0x1": 100,
-  "0x2": 50,
-  "0x3": 75,
-};
+const DEFAULT_AMOUNT = 100;
+
+const balances = [];
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
-  const balance = balances[address] || 0;
+  const balance = balances.find(value => value == address);
+  console.log("/balance", balance);
   res.send({ balance });
+});
+
+app.post("/newAddress", (req, res) => {
+  const { address, signature } = req.body;
+
+  if (balances.length == 0) {
+    balances.push({ address, amount: DEFAULT_AMOUNT });
+    console.log("newAddress, first address", balances);
+    res.send({ updated: true });
+    return;
+  }
+
+  const _exist = balances.find(value => value.address == address);
+
+  if (!_exist) {
+    balances.push({ address, amount: DEFAULT_AMOUNT });
+    res.send({ updated: true });
+    console.log("newAddress", balances);
+    return;
+  }
+
+  res.send({ updated: false });
+  return;
 });
 
 app.post("/send", (req, res) => {
