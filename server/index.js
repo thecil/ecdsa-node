@@ -12,6 +12,8 @@ const balances = [];
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
+  if (balances.length == 0) return res.status(400).send({ message: "Balances Empty" });
+
   if (balances.length > 0) {
     const balance = balances.find(value => value.address == address);
     if (balance) {
@@ -21,16 +23,13 @@ app.get("/balance/:address", (req, res) => {
     }
     if (!balance) return res.status(400).send({ message: "No Balance" });
   }
-  if (balances.length == 0) return res.status(400).send({ message: "Balances Empty" });
 });
 
-app.get("/exist/:address", (req, res) => {
-  const { address } = req.params;
-  const exist = balances.includes(address);
-  if (exist) {
-    console.log("/exist", exist);
-    res.send({ exist });
-  }
+app.get("/getAddresses", (req, res) => {
+  if (balances.length == 0) return res.status(400).send({ message: "Balances Empty" });
+  const _addresses = balances.map(value => value.address);
+  console.log("getAddresses", _addresses)
+  res.send({ addresses: _addresses });
 });
 
 app.post("/newAddress", (req, res) => {
@@ -85,3 +84,4 @@ function setInitialBalance(address) {
   }
   return 0;
 }
+

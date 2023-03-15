@@ -118,9 +118,9 @@ function Wallet({ address, setAddress, balance, setBalance }) {
               <Card.Title>Sign a safu message to transfer funds</Card.Title>
               <Stack direction="horizontal" gap={3}>
                 <Form.Control type="text" placeholder="Signature here" onChange={(e) => setMessage(e.target.value)} value={message} />
-                <Button disabled={message === ""} variant="primary" size="sm" onClick={onSubmitAddress}>Submit</Button>
+                <Button disabled={message === ""} variant="primary" size="sm" onClick={onSubmitAddress}>Sign</Button>
                 <div className="vr" />
-                <Button variant="outline-secondary" size="sm" onClick={genNewPrivKey}>Generate New</Button>
+                <Button variant="outline-secondary" size="sm" onClick={genNewPrivKey}>New</Button>
               </Stack>
             </Card.Body>
           </Card>
