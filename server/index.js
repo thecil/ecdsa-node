@@ -13,15 +13,23 @@ const balances = [];
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
   if (balances.length > 0) {
-    console.log("/balance", balances);
     const balance = balances.find(value => value.address == address);
     if (balance) {
       console.log("/balance", balance);
       res.send({ balance: balance.amount });
       return;
     }
-    res.status(400).send({ message: "No Balance" });
-    return;
+    if (!balance) return res.status(400).send({ message: "No Balance" });
+  }
+  if (balances.length == 0) return res.status(400).send({ message: "Balances Empty" });
+});
+
+app.get("/exist/:address", (req, res) => {
+  const { address } = req.params;
+  const exist = balances.includes(address);
+  if (exist) {
+    console.log("/exist", exist);
+    res.send({ exist });
   }
 });
 

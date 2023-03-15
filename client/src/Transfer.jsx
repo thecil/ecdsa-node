@@ -8,18 +8,12 @@ function Transfer() {
   const [amount, setAmount] = useState(0);
   const [signature, setSignature] = useState("");
   const [balance, setBalance] = useState(0);
-  const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    setValidated(true);
+    event.preventDefault();
+    console.log('handlesubmit')
   };
 
   const fetchBalance = async () => {
@@ -29,7 +23,7 @@ function Transfer() {
       const {
         data: { balance },
       } = await server.get(`balance/${from}`);
-
+      console.log("bal", balance)
       if (balance > 0) {
         setBalance(balance);
         setLoading(false);
@@ -45,21 +39,30 @@ function Transfer() {
     }
   }
   useEffect(() => {
-    if (from === "") setLoading(false);
+    if (from !== "") {
+      fetchBalance();
+      return;
+    }
 
-    fetchBalance();
-
+    setLoading(false)
     return;
   }, [from]);
 
+
+  const isFormReady = useMemo(() => {
+    const fromHaveFunds = Boolean(from !== "" && balance > 0);
+
+  }, [from, to, amount, signature])
   return (
-    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <h1 className="text-center">Send Transaction</h1>
 
       <Row className="mb-3">
         <Form.Group as={Col} controlId="formFrom">
           <Form.Label>From</Form.Label>
           <Form.Control size="sm" required type="text" placeholder="Your Address" onChange={(e) => setFrom(e.target.value)} value={from} />
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+
           {loading && (
             <Spinner className="mt-1" animation="border" variant="primary" />
           )}
@@ -73,7 +76,12 @@ function Transfer() {
 
         <Form.Group as={Col} controlId="formTo">
           <Form.Label>To</Form.Label>
-          <Form.Control size="sm" required type="text" placeholder="Public Address" onChange={(e) => setTo(e.target.value)} value={to} />
+          <Form.Select disabled={from === ""} size="sm" onChange={(e) => setTo(e.target.value)} value={to} >
+            <option>Open this select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </Form.Select>
         </Form.Group>
       </Row>
 
@@ -90,7 +98,7 @@ function Transfer() {
 
         <Form.Group as={Col} controlId="formAmount">
           <Form.Label>Signature</Form.Label>
-          <Form.Control size="sm" required type="text" placeholder="Your safu message" onChange={(e) => setSignature(e.target.value)} value={signature} />
+          <Form.Control disabled={from === ""} size="sm" required type="text" placeholder="Your safu message" onChange={(e) => setSignature(e.target.value)} value={signature} />
         </Form.Group>
       </Row>
 
