@@ -21,7 +21,7 @@ app.post("/newAddress", (req, res) => {
   const { address, signature } = req.body;
 
   if (balances.length == 0) {
-    balances.push({ address, amount: DEFAULT_AMOUNT });
+    balances.push({ address, amount: DEFAULT_AMOUNT, signature });
     console.log("newAddress, first address", balances);
     res.send({ updated: true });
     return;
@@ -30,7 +30,7 @@ app.post("/newAddress", (req, res) => {
   const _exist = balances.find(value => value.address == address);
 
   if (!_exist) {
-    balances.push({ address, amount: DEFAULT_AMOUNT });
+    balances.push({ address, amount: DEFAULT_AMOUNT, signature });
     res.send({ updated: true });
     console.log("newAddress", balances);
     return;

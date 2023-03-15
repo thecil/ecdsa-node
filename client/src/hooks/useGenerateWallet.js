@@ -9,9 +9,16 @@ export const useGenerateWallet = () => {
 
     const toKeccak = (value) => keccak256(value);
 
+    const signMessage = async (privateKey, message) => {
+        const _messageHash = utf8ToBytes(message);
+        const signature = await secp.sign(_messageHash, privateKey);
+        return toHex(signature);
+    }
+
     return {
         genPrivKey,
         publicKey,
+        signMessage,
         toHex,
         toKeccak
     }
