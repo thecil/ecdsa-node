@@ -12,9 +12,17 @@ const balances = [];
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
-  const balance = balances.find(value => value == address);
-  console.log("/balance", balance);
-  res.send({ balance });
+  if (balances.length > 0) {
+    console.log("/balance", balances);
+    const balance = balances.find(value => value.address == address);
+    if (balance) {
+      console.log("/balance", balance);
+      res.send({ balance: balance.amount });
+      return;
+    }
+    res.status(400).send({ message: "No Balance" });
+    return;
+  }
 });
 
 app.post("/newAddress", (req, res) => {
@@ -60,7 +68,12 @@ app.listen(port, () => {
 });
 
 function setInitialBalance(address) {
-  if (!balances[address]) {
-    balances[address] = 0;
+  if (balances.length == 0) {
+    const balance = balances.find(value => value.address == address);
+    if (balance) {
+      return balance.amount;
+    }
+    return 0;
   }
+  return 0;
 }
