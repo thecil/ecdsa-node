@@ -3,7 +3,7 @@ import { useGenerateWallet } from "./hooks/useGenerateWallet";
 import { useState, useEffect, useMemo } from "react";
 import { Row, Col, Button, Form, Stack, Card, Toast, ToastContainer } from 'react-bootstrap';
 
-function Wallet({ address, setAddress, balance, setBalance }) {
+function Wallet() {
   const { genPrivKey, publicKey, signMessage, toHex, toKeccak } = useGenerateWallet();
   const [privateKey, setPrivateKey] = useState([]);
   const [showToast, setShowToast] = useState(false);
@@ -53,6 +53,7 @@ function Wallet({ address, setAddress, balance, setBalance }) {
           } = await server.post(`newAddress`, {
             address: _publicKeyToEth,
             signature: signature,
+            publicKey: _publicKey
           });
           if (updated) setShowToast(true);
           return;
@@ -73,12 +74,12 @@ function Wallet({ address, setAddress, balance, setBalance }) {
     <>
       {showToast && (
         <ToastContainer position={"top-end"} className="p-3">
-          <Toast onClose={() => setShowToast(false)}
+          <Toast delay={10000} autohide onClose={() => setShowToast(false)}
             bg="success">
             <Toast.Header>
               <strong className="me-auto">Success</strong>
             </Toast.Header>
-            <Toast.Body>Address added: {_addressSliced}</Toast.Body>
+            <Toast.Body>Address added: {_addressSliced}, 100 tokens airdroped</Toast.Body>
           </Toast>
         </ToastContainer>
 

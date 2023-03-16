@@ -2,27 +2,17 @@ import Wallet from "./Wallet";
 import Transfer from "./Transfer";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from "react";
-
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { Container, Row, Col } from 'react-bootstrap';
 
 function App() {
-  const [balance, setBalance] = useState(0);
-  const [address, setAddress] = useState("");
 
   return (
     <Container fluid>
 
-      <Wallet
-        balance={balance}
-        setBalance={setBalance}
-        address={address}
-        setAddress={setAddress}
-      />
+      <Wallet />
 
       <Row>
-        <Col><Transfer setBalance={setBalance} address={address} /></Col>
+        <Col><Transfer/></Col>
       </Row>
     </Container>
 
