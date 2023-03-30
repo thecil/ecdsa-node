@@ -1,6 +1,7 @@
 import server from "../server";
 import { useGenerateWallet } from "../hooks/useGenerateWallet";
 import { useState, useEffect, useMemo } from "react";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Row, Col, Button, Form, Stack, Card, Toast, ToastContainer } from 'react-bootstrap';
 import VerifyMessage from "./VerifyMessage";
 
@@ -8,6 +9,7 @@ function Wallet() {
   const { genPrivKey, publicKey, signMessage, toHex, toKeccak } = useGenerateWallet();
   const [privateKey, setPrivateKey] = useState([]);
   const [showToast, setShowToast] = useState(false);
+  const [showCopyToast, setShowCopyToast] = useState(false);
   const [message, setMessage] = useState("");
 
   const genNewPrivKey = () => {
@@ -86,7 +88,17 @@ function Wallet() {
             <Toast.Body>Address added: {_addressSliced}, 100 tokens airdroped</Toast.Body>
           </Toast>
         </ToastContainer>
-
+      )}
+      {showCopyToast && (
+        <ToastContainer position={"top-end"} className="p-3">
+          <Toast delay={10000} autohide onClose={() => setShowCopyToast(false)}
+            bg="success">
+            <Toast.Header>
+              <strong className="me-auto">Copied</strong>
+            </Toast.Header>
+            <Toast.Body>Key copied to clipboard</Toast.Body>
+          </Toast>
+        </ToastContainer>
       )}
       <Row>
         <h1 className="text-center">Generate Wallet</h1>
@@ -99,7 +111,12 @@ function Wallet() {
                 <Card.Title>Keep private key safu</Card.Title>
                 <Card.Text>{_privateKeyToHex}</Card.Text>
 
-                <Button variant="secondary">Copy</Button>
+                <CopyToClipboard text={_privateKeyToHex}
+                  onCopy={() => setShowCopyToast(true)}>
+                  <Button variant="secondary">Copy</Button>
+                </CopyToClipboard>
+
+
               </Card.Body>
             </Card>
             <Card>
@@ -107,7 +124,12 @@ function Wallet() {
               <Card.Body>
                 <Card.Title>Share this address to receive funds</Card.Title>
                 <Card.Text>{_publicKeyToEth}</Card.Text>
-                <Button variant="secondary">Copy</Button>
+
+                <CopyToClipboard text={_publicKeyToEth}
+                  onCopy={() => setShowCopyToast(true)}>
+                  <Button variant="secondary">Copy</Button>
+                </CopyToClipboard>
+                
               </Card.Body>
             </Card>
           </Stack>
