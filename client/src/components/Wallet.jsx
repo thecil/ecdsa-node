@@ -48,14 +48,17 @@ function Wallet() {
     try {
       const signature = await signMessage(privateKey, message);
       if (signature) {
+        const _req = {
+          address: _publicKeyToEth,
+          signature: toHex(signature),
+          publicKey: toHex(_publicKey)
+        }
+        console.log("onSubmitAddress", { _req });
+
         try {
           const {
             data: { updated },
-          } = await server.post(`newAddress`, {
-            address: _publicKeyToEth,
-            signature: signature,
-            publicKey: _publicKey
-          });
+          } = await server.post(`newAddress`, _req);
           if (updated) setShowToast(true);
           return;
         } catch (ex) {

@@ -5,7 +5,7 @@ import { Row, Col, Button, Form, Stack, Card } from 'react-bootstrap';
 
 
 function VerifyMessage() {
-    const { verifyMessage } = useGenerateWallet();
+    const { verifyMessage, utf8ToBytes, toHex } = useGenerateWallet();
 
     const [address, setAddress] = useState("");
     const [message, setMessage] = useState("");
@@ -34,25 +34,38 @@ function VerifyMessage() {
         return;
     }, [address]);
 
-    return (
-        <Row className="mt-2">
-            <Col>
-                <Card>
-                    <Card.Header as="h5">Verify Message</Card.Header>
-                    <Card.Body>
-                        <Card.Title>Verify the safu message</Card.Title>
-                        <Form.Control type="text" placeholder="Address here" onChange={(e) => setAddress(e.target.value)} value={address} />
-                        {addressData.address && (
-                            <Stack direction="horizontal" gap={3}>
-                                <Form.Control type="text" placeholder="Signature here" onChange={(e) => setMessage(e.target.value)} value={message} />
-                                <Button disabled={message === ""} variant="primary" size="sm" onClick={onSubmitSignature}>Verify</Button>
-                            </Stack>
-                        )}
-                    </Card.Body>
-                </Card>
-            </Col>
-        </Row>
-    )
+    useEffect(() => {
+        if (message !== "") {
+            const _test = utf8ToBytes("test");
+            const _msg = utf8ToBytes(message);
+            const _hexMsg = toHex(_msg);
+            const _tHex = toHex(_test);
+            const isEqual = _hexMsg  === _tHex;
+
+            console.log("message", { message, _hexMsg, isEqual, _tHex });
+}
+return;
+    }, [message]);
+
+return (
+    <Row className="mt-2">
+        <Col>
+            <Card>
+                <Card.Header as="h5">Verify Message</Card.Header>
+                <Card.Body>
+                    <Card.Title>Verify the safu message</Card.Title>
+                    <Form.Control type="text" placeholder="Address here" onChange={(e) => setAddress(e.target.value)} value={address} />
+                    {addressData.address && (
+                        <Stack direction="horizontal" gap={3}>
+                            <Form.Control type="text" placeholder="Signature here" onChange={(e) => setMessage(e.target.value)} value={message} />
+                            <Button disabled={message === ""} variant="primary" size="sm" onClick={onSubmitSignature}>Verify</Button>
+                        </Stack>
+                    )}
+                </Card.Body>
+            </Card>
+        </Col>
+    </Row>
+)
 }
 
 export default VerifyMessage;

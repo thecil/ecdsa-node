@@ -4,30 +4,32 @@ import { keccak256 } from "ethereum-cryptography/keccak";
 
 export const useGenerateWallet = () => {
 
+    const toKeccak = (value) => keccak256(value);
+
     const genPrivKey = () => secp.utils.randomPrivateKey();
 
     const publicKey = (privateKey) => secp.getPublicKey(privateKey);
 
-    const toKeccak = (value) => keccak256(value);
-
     const signMessage = async (privateKey, message) => {
-        const _messageHash = utf8ToBytes(message.trim());
+        const _messageHash = toHex(toKeccak(utf8ToBytes(message.trim())));
         const signature = await secp.sign(_messageHash, privateKey);
         return signature;
     }
 
-    const verifyMessage = async (signature, message, publicKey) => {
-        const _messageHash = utf8ToBytes(message.trim());
-        const isSigned = secp.verify(signature, _messageHash, publicKey);
-        return isSigned;
+    const verifyMessage = (signature, message, publicKey) => {
+        const _messageHash = toHex(toKeccak(utf8ToBytes(message.trim())));
+        const isValid = secp.verify(signature, _messageHash, publicKey);
+        return isValid;
     }
 
     return {
+        utf8ToBytes,
+        toHex,
+        hexToBytes,
+        toKeccak,
         genPrivKey,
         publicKey,
         signMessage,
-        toHex,
-        toKeccak,
         verifyMessage
     }
 }

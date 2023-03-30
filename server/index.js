@@ -1,7 +1,7 @@
 const express = require("express");
 const secp = require("ethereum-cryptography/secp256k1");
 const { hexToBytes, toHex, utf8ToBytes } = require("ethereum-cryptography/utils");
-
+const { keccak256 } = require("ethereum-cryptography/keccak")
 
 const app = express();
 const cors = require("cors");
@@ -11,8 +11,9 @@ app.use(cors());
 app.use(express.json());
 
 const DEFAULT_AMOUNT = 100;
-
 const balances = [];
+
+const toKeccak = (value) => keccak256(value);
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
@@ -33,7 +34,7 @@ app.get("/getAddress/:address", (req, res) => {
   const { address } = req.params;
   if (balances.length == 0) return res.status(400).send({ message: "Address Empty" });
   const _exist = balances.find(value => value.address == address);
-  console.log("getAddress", _exist)
+  console.log("getAddress", _exist.address)
   res.send({ ..._exist });
 });
 
@@ -49,7 +50,7 @@ app.post("/newAddress", (req, res) => {
 
   if (balances.length == 0) {
     balances.push({ address, amount: DEFAULT_AMOUNT, signature, publicKey });
-    console.log("newAddress, first address", balances);
+    console.log("newAddress, first address", balances[0]);
     res.send({ updated: true });
     return;
   }
@@ -81,19 +82,18 @@ app.post("/send", (req, res) => {
       return res.status(400).send({ message: "Not enough funds!" });
     }
 
-    const _messageHash = utf8ToBytes(message.trim());
+    const _messageHash = toHex(toKeccak(utf8ToBytes(message.trim())));
     const _signature = balances[_sender].signature;
     const _publicKey = balances[_sender].publicKey;
 
-    // const isSigned = secp.verify(_signature, _messageHash, _publicKey);
-    const isSigned = true;
-    console.log("verify", isSigned, balances[_sender]);
+    const isValid = secp.verify(_signature, _messageHash, _publicKey);
+    console.log("verify", isValid, balances[_sender].address);
 
-    if (!isSigned) {
+    if (!isValid) {
       return res.status(400).send({ message: "Signature does not match" });
     }
 
-    if (isSigned) {
+    if (isValid) {
       balances[_sender].amount -= amount;
       balances[_recipient].amount += amount;
 
