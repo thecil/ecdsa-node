@@ -26,7 +26,7 @@ function Transfer() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('handlesubmit', { from, to, amount, signature });
+    // console.log('handlesubmit', { from, to, amount, signature });
 
     try {
       const {
@@ -64,7 +64,7 @@ function Transfer() {
       }
 
     } catch (error) {
-      console.log("getBalance:Error:", error);
+      // console.log("getBalance:Error:", error);
       setBalance(0);
       setLoadingAmount(false);
       setIsError(true);

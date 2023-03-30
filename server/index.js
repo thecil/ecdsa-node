@@ -34,7 +34,7 @@ app.get("/getAddress/:address", (req, res) => {
   const { address } = req.params;
   if (balances.length == 0) return res.status(400).send({ message: "Address Empty" });
   const _exist = balances.find(value => value.address == address);
-  console.log("getAddress", _exist.address)
+  // console.log("getAddress", _exist.address)
   res.send({ ..._exist });
 });
 
@@ -50,7 +50,7 @@ app.post("/newAddress", (req, res) => {
 
   if (balances.length == 0) {
     balances.push({ address, amount: DEFAULT_AMOUNT, signature, publicKey });
-    console.log("newAddress, first address", balances[0]);
+    // console.log("newAddress, first address", balances[0]);
     res.send({ updated: true });
     return;
   }
@@ -60,7 +60,7 @@ app.post("/newAddress", (req, res) => {
   if (!_exist) {
     balances.push({ address, amount: DEFAULT_AMOUNT, signature, publicKey });
     res.send({ updated: true });
-    console.log("newAddress", balances[balances.length - 1]);
+    // console.log("newAddress", balances[balances.length - 1]);
     return;
   }
 
@@ -87,7 +87,7 @@ app.post("/send", (req, res) => {
     const _publicKey = balances[_sender].publicKey;
 
     const isValid = secp.verify(_signature, _messageHash, _publicKey);
-    console.log("verify", isValid, balances[_sender].address);
+    // console.log("verify", isValid, balances[_sender].address);
 
     if (!isValid) {
       return res.status(400).send({ message: "Signature does not match" });
@@ -98,8 +98,8 @@ app.post("/send", (req, res) => {
       balances[_recipient].amount += amount;
 
       res.send({ updated: true });
-      console.log("body", { sender, recipient, amount, message });
-      console.log("sending funds", [_sender, _recipient, balances[_sender].amount, balances[_recipient].amount])
+      // console.log("body", { sender, recipient, amount, message });
+      // console.log("sending funds", [_sender, _recipient, balances[_sender].amount, balances[_recipient].amount])
 
       return;
     }
