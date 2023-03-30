@@ -16,12 +16,18 @@ export const useGenerateWallet = () => {
         return signature;
     }
 
+    const verifyMessage = async (signature, message, publicKey) => {
+        const _messageHash = utf8ToBytes(message.trim());
+        const isSigned = secp.verify(signature, _messageHash, publicKey);
+        return isSigned;
+    }
 
     return {
         genPrivKey,
         publicKey,
         signMessage,
         toHex,
-        toKeccak
+        toKeccak,
+        verifyMessage
     }
 }

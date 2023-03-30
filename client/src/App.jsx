@@ -1,19 +1,12 @@
-import Wallet from "./Wallet";
-import Transfer from "./Transfer";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from "react";
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
+import AppTabs from "./components/AppTabs";
 
 function App() {
 
   return (
     <Container fluid>
-
-      <Wallet />
-
-      <Row>
-        <Col><Transfer/></Col>
-      </Row>
+      <AppTabs />
     </Container>
 
 

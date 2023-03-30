@@ -1,6 +1,6 @@
+import server from "../server";
 import { useState, useMemo, useEffect } from "react";
-import server from "./server";
-import { Row, Col, Button, Form, InputGroup, Spinner } from "react-bootstrap";
+import { Row, Col, Button, Form, InputGroup, Spinner, Toast, ToastContainer } from "react-bootstrap";
 
 function Transfer() {
   const [from, setFrom] = useState("");
@@ -37,7 +37,11 @@ function Transfer() {
         amount: amount,
         message: signature
       });
-      if (updated) setShowToast(true);
+      if (updated) {
+        setShowToast(true);
+        getBalance();
+      };
+
       return;
     } catch (ex) {
       alert(ex.response.data.message);
@@ -114,59 +118,63 @@ function Transfer() {
         </ToastContainer>
 
       )}
+      <Row>
+        <Col>
+          <Form onSubmit={handleSubmit}>
+            <h1 className="text-center">Send Transaction</h1>
 
-      <Form onSubmit={handleSubmit}>
-        <h1 className="text-center">Send Transaction</h1>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="formFrom">
+                <Form.Label>From</Form.Label>
+                <Form.Control size="sm" required type="text" placeholder="Your Address" onChange={(e) => setFrom(e.target.value)} value={from} />
+                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
 
-        <Row className="mb-3">
-          <Form.Group as={Col} controlId="formFrom">
-            <Form.Label>From</Form.Label>
-            <Form.Control size="sm" required type="text" placeholder="Your Address" onChange={(e) => setFrom(e.target.value)} value={from} />
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                {loadingAMount && (
+                  <Spinner className="mt-1" animation="border" variant="primary" />
+                )}
+                {balance > 0 && !loadingAMount && (
+                  <Form.Text id="addressBalance" muted>Amount Available: {balance}</Form.Text>
+                )}
+                {from !== "" && isError && !loadingAMount && (
+                  <Form.Text id="errorBalance" muted>Incorrect Address</Form.Text>
+                )}
+              </Form.Group>
 
-            {loadingAMount && (
-              <Spinner className="mt-1" animation="border" variant="primary" />
-            )}
-            {balance > 0 && !loadingAMount && (
-              <Form.Text id="addressBalance" muted>Amount Available: {balance}</Form.Text>
-            )}
-            {from !== "" && isError && !loadingAMount && (
-              <Form.Text id="errorBalance" muted>Incorrect Address</Form.Text>
-            )}
-          </Form.Group>
+              <Form.Group as={Col} controlId="formTo">
+                <Form.Label>To</Form.Label>
+                <Form.Select disabled={!fromIsValid} size="sm" onChange={(e) => setTo(e.target.value)} value={to} >
+                  <option value="">Select recipient </option>
+                  {toAddresses.map((address, key) => {
+                    return (<option key={key} disabled={from === address} value={address}>{address}</option>)
+                  })}
+                </Form.Select>
+              </Form.Group>
+            </Row>
 
-          <Form.Group as={Col} controlId="formTo">
-            <Form.Label>To</Form.Label>
-            <Form.Select disabled={!fromIsValid} size="sm" onChange={(e) => setTo(e.target.value)} value={to} >
-              <option value="">Select recipient </option>
-              {toAddresses.map((address, key) => {
-                return (<option key={key} disabled={from === address} value={address}>{address}</option>)
-              })}
-            </Form.Select>
-          </Form.Group>
-        </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="formAmount">
+                <Form.Label>Amount</Form.Label>
+                <InputGroup>
+                  <Form.Control disabled={!fromIsValid} size="sm" required type="number" placeholder="0.1" min={0} max={balance} onChange={(e) => setAmount(parseFloat(e.target.value))} value={amount} />
+                  <Button onClick={() => setAmount(balance)} disabled={!fromIsValid} size="sm" variant="outline-secondary" id="button-addon2">
+                    Max
+                  </Button>
+                </InputGroup>
+              </Form.Group>
 
-        <Row className="mb-3">
-          <Form.Group as={Col} controlId="formAmount">
-            <Form.Label>Amount</Form.Label>
-            <InputGroup>
-              <Form.Control disabled={!fromIsValid} size="sm" required type="number" placeholder="0.1" min={0} max={balance} onChange={(e) => setAmount(e.target.value)} value={amount} />
-              <Button onClick={() => setAmount(balance)} disabled={!fromIsValid} size="sm" variant="outline-secondary" id="button-addon2">
-                Max
-              </Button>
-            </InputGroup>
-          </Form.Group>
+              <Form.Group as={Col} controlId="fromSignature">
+                <Form.Label>Signature</Form.Label>
+                <Form.Control disabled={!fromIsValid} size="sm" required type="text" placeholder="Your safu message" onChange={(e) => setSignature(e.target.value)} value={signature} />
+              </Form.Group>
+            </Row>
 
-          <Form.Group as={Col} controlId="fromSignature">
-            <Form.Label>Signature</Form.Label>
-            <Form.Control disabled={!fromIsValid} size="sm" required type="text" placeholder="Your safu message" onChange={(e) => setSignature(e.target.value)} value={signature} />
-          </Form.Group>
-        </Row>
+            <Button disabled={!inputsAreValid} size="sm" variant="primary" type="submit">
+              {isSending ? "Sending" : "Send"}
+            </Button>
+          </Form>
+        </Col>
+      </Row>
 
-        <Button disabled={!inputsAreValid} size="sm" variant="primary" type="submit">
-          {isSending ? "Sending" : "Send"}
-        </Button>
-      </Form>
     </>
   );
 }

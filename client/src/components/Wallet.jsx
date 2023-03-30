@@ -1,7 +1,8 @@
-import server from "./server";
-import { useGenerateWallet } from "./hooks/useGenerateWallet";
+import server from "../server";
+import { useGenerateWallet } from "../hooks/useGenerateWallet";
 import { useState, useEffect, useMemo } from "react";
 import { Row, Col, Button, Form, Stack, Card, Toast, ToastContainer } from 'react-bootstrap';
+import VerifyMessage from "./VerifyMessage";
 
 function Wallet() {
   const { genPrivKey, publicKey, signMessage, toHex, toKeccak } = useGenerateWallet();
@@ -87,7 +88,6 @@ function Wallet() {
       <Row>
         <h1 className="text-center">Generate Wallet</h1>
 
-
         <Col>
           <Stack direction="vertical" gap={2}>
             <Card>
@@ -127,6 +127,9 @@ function Wallet() {
           </Card>
         </Col>
       </Row>
+
+
+      <VerifyMessage />
     </>
 
   );
