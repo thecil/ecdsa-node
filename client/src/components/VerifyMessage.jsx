@@ -40,7 +40,7 @@ function VerifyMessage() {
                 <Card>
                     <Card.Header as="h5">Verify Message</Card.Header>
                     <Card.Body>
-                        <Card.Title>Verify the safu message to transfer funds</Card.Title>
+                        <Card.Title>Verify the safu message</Card.Title>
                         <Form.Control type="text" placeholder="Address here" onChange={(e) => setAddress(e.target.value)} value={address} />
                         {addressData.address && (
                             <Stack direction="horizontal" gap={3}>
