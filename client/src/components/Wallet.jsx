@@ -64,7 +64,7 @@ function Wallet() {
           if (updated) setShowToast(true);
           return;
         } catch (ex) {
-          alert(ex.response.data.message);
+          alert("server error", ex.response.data.message);
           return;
         }
       }

@@ -1,19 +1,24 @@
 const express = require("express");
 const secp = require("ethereum-cryptography/secp256k1");
-const { hexToBytes, toHex, utf8ToBytes } = require("ethereum-cryptography/utils");
+const { toHex, utf8ToBytes } = require("ethereum-cryptography/utils");
 const { keccak256 } = require("ethereum-cryptography/keccak")
 
 const app = express();
-const cors = require("cors");
 const port = 3042;
+const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
+
 
 const DEFAULT_AMOUNT = 100;
 const balances = [];
 
 const toKeccak = (value) => keccak256(value);
+
+app.get("/", (req, res) => {
+  res.send("Express on Vercel");
+});
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
@@ -113,3 +118,5 @@ app.listen(port, () => {
 });
 
 
+// Export the Express API
+module.exports = app;
